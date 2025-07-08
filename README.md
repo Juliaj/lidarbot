@@ -89,13 +89,15 @@ The following components were used in this project:
 |11| Powerbank for RPi 4 (minimum output: 5V 3A)| Reuse | 0
 |12| Gamepad| Reuse | 0
 |13| [Mini Travel Router (optional)](https://s.click.aliexpress.com/e/_DcgfT61)| Reuse | 0
-|14| 3 Slot 18650 battery holder| TODO - 3D print
+|14| 3 Slot 18650 battery holder| [amazon](https://www.amazon.com/dp/B07CWKV9H7/ref=sspa_dk_detail_0?s=electronics#averageCustomerReviewsAnchor)|
 |15| 3 x 18650 batteries to power Motor Driver HAT| [amazon](https://www.amazon.com/4pcs-Rechargeable-Batter%EF%BF%B5y-Charger-LSXdetoro/dp/B0DF6CPJFR/ref=sr_1_5), [hobbyking](https://hobbyking.com/en_us/turnigy-heavy-duty-5000mah-3s-60c-lipo-pack-w-xt-90.html#qa[bW9kZT03JnBhZ2U9MSZxdWVzdGlvbl9zZWFyY2hfY29udGVudD0=]) buy | 22 - 27
 |16| Female to Female Dupont jumper cables|
 |17| Spare wires|
 |18| Logitech C270 webcam (optional)|
 |19| |[Bench power supply (optional)](https://www.amazon.com/Jesverty-Variable-Switching-Quick-Charge-Adjustment/dp/B0DDPVDWPZ/ref=sr_1_2_sspa) | 50
 |20| |Soldering Mat|
+|21||[16mm Latching Push Button Switch 12VDC](https://www.amazon.com/warranty-Latching-Stainless-Mounting-Self-locking/dp/B079314TMN/ref=sr_1_3)|7
+|22||[Toggle Switch](https://www.amazon.com/DaierTek-Lighted-Illuminated-Automotive-Vehicles/dp/B07T6XJF1T/ref=sr_1_1_sspa)|7
 
 Some other tools or parts used in the project are as follows:
 
