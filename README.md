@@ -74,26 +74,28 @@ A preprint of this work is available [here](http://dx.doi.org/10.13140/RG.2.2.15
 ### Part list
 The following components were used in this project:
 
-| | Part |
-| --| --|
-|1| Raspberry Pi 4 (4 GB)|
-|2| SanDisk 32 GB SD Card (minimum)|
-|3| [Two wheel drive robot chassis kit](https://www.amazon.com/perseids-Chassis-Encoder-Wheels-Battery/dp/B07DNYQ3PX/ref=sr_1_9?crid=3T8FVRRMPFCIX&keywords=two+wheeled+drive+robot+chassis&qid=1674141374&sprefix=two+wheeled+drive+robot+chas%2Caps%2C397&sr=8-9)|
-|4| [Waveshare Motor Driver HAT](https://www.waveshare.com/wiki/Motor_Driver_HAT)|
-|5| 2 x [Motors with encoders and wire harness](https://s.click.aliexpress.com/e/_DBL19Mr)|
-|6| MPU6050 board|
-|7| [RPlidar A1](https://s.click.aliexpress.com/e/_DdPdRS7)|
-|8| Raspberry Pi camera v1.3|
-|9| [3D printed stands for RPlidar A1 and RPi 4](https://www.thingiverse.com/thing:3970110)|
-|10| Mount for Raspberry Pi camera|
-|11| Powerbank for RPi 4 (minimum output: 5V 3A)|
-|12| Gamepad|
-|13| [Mini Travel Router (optional)](https://s.click.aliexpress.com/e/_DcgfT61)|
-|14| 3 Slot 18650 battery holder|
-|15| 3 x 18650 batteries to power Motor Driver HAT|
+| | Part |Build - Gen1| Cost($)|
+| --| --| --| --|
+|1| Raspberry Pi 4 (4 GB)| Reuse | 0 
+|2| SanDisk 32 GB SD Card (minimum)| Reuse | 0
+|3| [Two wheel drive robot chassis kit](https://www.amazon.com/perseids-Chassis-Encoder-Wheels-Battery/dp/B07DNYQ3PX/ref=sr_1_9?crid=3T8FVRRMPFCIX&keywords=two+wheeled+drive+robot+chassis&qid=1674141374&sprefix=two+wheeled+drive+robot+chas%2Caps%2C397&sr=8-9)| Same | 18
+|4| [Waveshare Motor Driver HAT](https://www.waveshare.com/wiki/Motor_Driver_HAT)| [Waveshare Motor Driver HAT](https://www.amazon.com/Raspberry-Onboard-PCA9685-TB6612FNG-Interface/dp/B07K7NP7C9/ref=sr_1_2) |23
+|5| 2 x [Motors with encoders and wire harness](https://s.click.aliexpress.com/e/_DBL19Mr)| Same, buy | TODO
+|6| MPU6050 board| [HiLetGo MPU6050](https://www.amazon.com/HiLetgo-MPU-6050-Accelerometer-Gyroscope-Converter/dp/B00LP25V1A/ref=sr_1_3) | 11
+|7| [RPlidar A1](https://s.click.aliexpress.com/e/_DdPdRS7)|[FHL-LD19](https://www.amazon.com/youyeetoo-D300-Resistant-Raspberry-Tutorial/dp/B0B1QCV4XR), buy|70
+|8| Raspberry Pi camera v1.3|Raspberry Pi camera v1.2 | 0
+|9| [3D printed stands for RPlidar A1 and RPi 4](https://www.thingiverse.com/thing:3970110)| TODO
+|10| Mount for Raspberry Pi camera| TODO
+|11| Powerbank for RPi 4 (minimum output: 5V 3A)| Reuse | 0
+|12| Gamepad| Reuse | 0
+|13| [Mini Travel Router (optional)](https://s.click.aliexpress.com/e/_DcgfT61)| Reuse | 0
+|14| 3 Slot 18650 battery holder| TODO - 3D print
+|15| 3 x 18650 batteries to power Motor Driver HAT| [amazon](https://www.amazon.com/4pcs-Rechargeable-Batter%EF%BF%B5y-Charger-LSXdetoro/dp/B0DF6CPJFR/ref=sr_1_5), [hobbyking](https://hobbyking.com/en_us/turnigy-heavy-duty-5000mah-3s-60c-lipo-pack-w-xt-90.html#qa[bW9kZT03JnBhZ2U9MSZxdWVzdGlvbl9zZWFyY2hfY29udGVudD0=]) buy | 22 - 27
 |16| Female to Female Dupont jumper cables|
 |17| Spare wires|
 |18| Logitech C270 webcam (optional)|
+|19| |[Bench power supply (optional)](https://www.amazon.com/Jesverty-Variable-Switching-Quick-Charge-Adjustment/dp/B0DDPVDWPZ/ref=sr_1_2_sspa) | 50
+|20| |Soldering Mat|
 
 Some other tools or parts used in the project are as follows:
 
