@@ -6,8 +6,8 @@
         <inertial>
             <xacro:insert_block name="origin"/>
             <mass value="${mass}"/>
-            <inertia ixx="${(mass/12) * (width*width + height*height)}" ixy="0.0" ixz="0.0" 
-                    iyy="${(mass/12) * (length*length + height*height)}" iyz="0.0" 
+            <inertia ixx="${(mass/12) * (width*width + height*height)}" ixy="0.0" ixz="0.0"
+                    iyy="${(mass/12) * (length*length + height*height)}" iyz="0.0"
                     izz="${(mass/12) * (length*length + width*width)}"/>
         </inertial>
     </xacro:macro>
@@ -16,12 +16,12 @@
         <inertial>
             <xacro:insert_block name="origin"/>
             <mass value="${mass}"/>
-            <inertia ixx="${(2/5) * mass * (radius*radius)}" ixy="0.0" ixz="0.0" 
-                    iyy="${(2/5) * mass * (radius*radius)}" iyz="0.0" 
+            <inertia ixx="${(2/5) * mass * (radius*radius)}" ixy="0.0" ixz="0.0"
+                    iyy="${(2/5) * mass * (radius*radius)}" iyz="0.0"
                     izz="${(2/5) * mass * (radius*radius)}"/>
         </inertial>
     </xacro:macro>
-    
+
     <xacro:macro name="cylinder_inertia" params="mass length radius *origin">
         <inertial>
             <xacro:insert_block name="origin"/>

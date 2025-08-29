@@ -3,7 +3,7 @@
 * | Author      :   Waveshare team
 * | Function    :   Drive PCA9685
 * | Info        :
-*                Used to shield the underlying layers of each master 
+*                Used to shield the underlying layers of each master
 *                and enhance portability
 *----------------
 * |	This version:   V1.0

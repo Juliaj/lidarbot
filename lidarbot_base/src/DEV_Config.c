@@ -51,7 +51,7 @@ static int DEV_Equipment_Testing(void)
 		char RPI_System[10]   = {"Raspbian"};
 		for(i=0; i<6; i++) {
 			if(RPI_System[i] != value_str[i]) {
-                #if USE_DEV_LIB    
+                #if USE_DEV_LIB
                     return 'J';
                 #endif
                 return -1;
@@ -71,10 +71,10 @@ Info:
 void DEV_GPIO_Mode(UWORD Pin, UWORD Mode)
 {
     /*
-        0:  INPT   
+        0:  INPT
         1:  OUTP
     */
-#ifdef USE_BCM2835_LIB  
+#ifdef USE_BCM2835_LIB
     if(Mode == 0 || Mode == BCM2835_GPIO_FSEL_INPT){
         bcm2835_gpio_fsel(Pin, BCM2835_GPIO_FSEL_INPT);
     }else {
@@ -84,7 +84,7 @@ void DEV_GPIO_Mode(UWORD Pin, UWORD Mode)
     if(Mode == 0 || Mode == INPUT){
         pinMode(Pin, INPUT);
         pullUpDnControl(Pin, PUD_UP);
-    }else{ 
+    }else{
         pinMode(Pin, OUTPUT);
     }
 #elif USE_DEV_LIB
@@ -94,20 +94,20 @@ void DEV_GPIO_Mode(UWORD Pin, UWORD Mode)
     }else{
         SYSFS_GPIO_Direction(Pin, SYSFS_GPIO_OUT);
     }
-#endif   
+#endif
 }
 
 void DEV_Digital_Write(UWORD Pin, UBYTE Value)
 {
 #ifdef USE_BCM2835_LIB
     bcm2835_gpio_write(Pin, Value);
-    
+
 #elif USE_WIRINGPI_LIB
     digitalWrite(Pin, Value);
-    
+
 #elif USE_DEV_LIB
     SYSFS_GPIO_Write(Pin, Value);
-    
+
 #endif
 }
 
@@ -116,10 +116,10 @@ UBYTE DEV_Digital_Read(UWORD Pin)
     UBYTE Read_value = 0;
 #ifdef USE_BCM2835_LIB
     Read_value = bcm2835_gpio_lev(Pin);
-    
+
 #elif USE_WIRINGPI_LIB
     Read_value = digitalRead(Pin);
-    
+
 #elif USE_DEV_LIB
     Read_value = SYSFS_GPIO_Read(Pin);
 #endif
@@ -158,7 +158,7 @@ void GPIO_Config(void)
         printf("Device read failed or unrecognized!!!\r\n");
         while(1);
     }
-    
+
     DEV_GPIO_Mode(INT_PIN, 0);
 }
 
@@ -171,21 +171,21 @@ void DEV_SPI_Init()
 {
 #if DEV_SPI
     #ifdef USE_BCM2835_LIB
-        printf("BCM2835 SPI Device\r\n");  
+        printf("BCM2835 SPI Device\r\n");
         bcm2835_spi_begin();                                         //Start spi interface, set spi pin for the reuse function
         bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);     //High first transmission
         bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                  //spi mode 0
         bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_128);  //Frequency
         bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                     //set CE0
         bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);     //enable cs0
-        
+
     #elif USE_WIRINGPI_LIB
-        printf("WIRINGPI SPI Device\r\n");       
+        printf("WIRINGPI SPI Device\r\n");
         //wiringPiSPISetup(0,9000000);
         wiringPiSPISetupMode(0, 9000000, 0);
-        
+
     #elif USE_DEV_LIB
-        printf("DEV SPI Device\r\n"); 
+        printf("DEV SPI Device\r\n");
         DEV_HARDWARE_SPI_begin("/dev/spidev0.0");
     #endif
 #endif
@@ -196,10 +196,10 @@ void DEV_SPI_WriteByte(uint8_t Value)
 #if DEV_SPI
     #ifdef USE_BCM2835_LIB
         bcm2835_spi_transfer(Value);
-        
+
     #elif USE_WIRINGPI_LIB
         wiringPiSPIDataRW(0,&Value,1);
-        
+
     #elif USE_DEV_LIB
         DEV_HARDWARE_SPI_TransferByte(Value);
     #endif
@@ -212,13 +212,13 @@ void DEV_SPI_Write_nByte(uint8_t *pData, uint32_t Len)
     #ifdef USE_BCM2835_LIB
         uint8_t rData[Len];
         bcm2835_spi_transfernb(pData,rData,Len);
-        
+
     #elif USE_WIRINGPI_LIB
         wiringPiSPIDataRW(0, pData, Len);
-        
+
     #elif USE_DEV_LIB
         DEV_HARDWARE_SPI_Transfer(pData, Len);
-        
+
     #endif
 #endif
 }
@@ -231,16 +231,16 @@ void DEV_I2C_Init(uint8_t Add)
 {
 #if DEV_I2C
     #ifdef USE_BCM2835_LIB
-        printf("BCM2835 I2C Device\r\n");  
+        printf("BCM2835 I2C Device\r\n");
         bcm2835_i2c_begin();
         bcm2835_i2c_setSlaveAddress(Add);
-        
+
     #elif USE_WIRINGPI_LIB
-        printf("WIRINGPI I2C Device\r\n");       
+        printf("WIRINGPI I2C Device\r\n");
         fd = wiringPiI2CSetup(Add);
-        
+
     #elif USE_DEV_LIB
-        // printf("DEV I2C Device\r\n"); 
+        // printf("DEV I2C Device\r\n");
         DEV_HARDWARE_I2C_begin("/dev/i2c-1");
         DEV_HARDWARE_I2C_setSlaveAddress(Add);
     #endif
@@ -278,10 +278,10 @@ int I2C_Read_Byte(uint8_t Cmd)
         char rbuf[2]={0};
         bcm2835_i2c_read_register_rs(&Cmd, rbuf, 1);
         ref = rbuf[0];
-        
+
     #elif USE_WIRINGPI_LIB
         ref = wiringPiI2CReadReg8 (fd, (int)Cmd);
-        
+
     #elif USE_DEV_LIB
         char rbuf[2]={0};
         DEV_HARDWARE_I2C_read(Cmd, rbuf, 1);
@@ -300,10 +300,10 @@ int I2C_Read_Word(uint8_t Cmd)
         char rbuf[2] = {0};
         bcm2835_i2c_read_register_rs(&Cmd, rbuf, 2);
         ref = rbuf[1]<<8 | rbuf[0];
-        
+
     #elif USE_WIRINGPI_LIB
         ref = wiringPiI2CReadReg16 (fd, (int)Cmd);
-        
+
     #elif USE_DEV_LIB
         char rbuf[2] = {0};
         DEV_HARDWARE_I2C_read(Cmd, rbuf, 2);
@@ -328,8 +328,8 @@ UBYTE DEV_ModuleInit(void)
         printf("bcm2835 init success !!! \r\n");
     }
 
-#elif USE_WIRINGPI_LIB  
-    //if(wiringPiSetup() < 0)//use wiringpi Pin number table  
+#elif USE_WIRINGPI_LIB
+    //if(wiringPiSetup() < 0)//use wiringpi Pin number table
     if(wiringPiSetupGpio() < 0) { //use BCM2835 Pin number table
         printf("set wiringPi lib failed	!!! \r\n");
         return 1;
@@ -342,7 +342,7 @@ UBYTE DEV_ModuleInit(void)
 #endif
     GPIO_Config();
     DEV_I2C_Init(0x29);
-    
+
     return 0;
 }
 
@@ -361,7 +361,7 @@ void DEV_ModuleExit(void)
         bcm2835_spi_end();
     #endif
     bcm2835_close();
-    
+
 #elif USE_WIRINGPI_LIB
 
 #elif USE_DEV_LIB
@@ -373,4 +373,3 @@ void DEV_ModuleExit(void)
     #endif
 #endif
 }
-

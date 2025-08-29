@@ -65,7 +65,7 @@ CallbackReturn LidarbotHardware::on_configure(const rclcpp_lifecycle::State & /*
 
     // Initialize wiringPi using GPIO BCM pin numbers
     wiringPiSetupGpio();
-    
+
     // Setup GPIO encoder interrupt and direction pins
     pinMode(LEFT_WHL_ENC_INT, INPUT);
     pinMode(RIGHT_WHL_ENC_INT, INPUT);
@@ -93,7 +93,7 @@ CallbackReturn LidarbotHardware::on_activate(const rclcpp_lifecycle::State & /*p
 }
 
 CallbackReturn LidarbotHardware::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
-{   
+{
     RCLCPP_INFO(logger_, "Stopping Controller...");
 
     return CallbackReturn::SUCCESS;
@@ -120,7 +120,7 @@ return_type LidarbotHardware::read(const rclcpp::Time & /*time*/, const rclcpp::
 }
 
 return_type LidarbotHardware::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
-{   
+{
     double left_motor_counts_per_loop = left_wheel_.command / left_wheel_.rads_per_tick / config_.loop_rate;
     double right_motor_counts_per_loop = right_wheel_.command / right_wheel_.rads_per_tick / config_.loop_rate;
 
@@ -135,5 +135,5 @@ return_type LidarbotHardware::write(const rclcpp::Time & /*time*/, const rclcpp:
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-    lidarbot_base::LidarbotHardware, 
+    lidarbot_base::LidarbotHardware,
     hardware_interface::SystemInterface)

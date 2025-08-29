@@ -7,7 +7,7 @@
             <geometry>
                 <mesh filename="package://lidarbot_description/meshes/rplidar_top.dae"/>
             </geometry>
-        </visual> 
+        </visual>
         <collision>
             <origin xyz="0 -0.0028 0" rpy="0 0 0"/>
             <geometry>

@@ -13,13 +13,13 @@ void reset_pulse_counters()
 
 // Move a specified motor forward
 bool move_motor(int motor_id)
-{   
+{
     // Motor_id
     // MOTORA - 0 (left motor)
     // MOTORB - 1 (right motor)
     reset_pulse_counters();
     sleep(2);
-    
+
     // Move motor FORWARD for 2 seconds at 50% speed
     Motor_Run(motor_id, FORWARD, 50);
     sleep(2);
@@ -39,7 +39,7 @@ bool move_motor(int motor_id)
 }
 
 // DDS helps pass the request and response between client and server
-void checkMotors(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, 
+void checkMotors(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
                 std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
 
     // Prepare response
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 
     // Initialize wiringPi using GPIO BCM pin numbers
     wiringPiSetupGpio();
-    
+
     // Setup GPIO encoder interrupt and direction pins
     pinMode(LEFT_WHL_ENC_INT, INPUT);
     pinMode(RIGHT_WHL_ENC_INT, INPUT);
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
     std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("motor_checks_server");
 
     // Create a "checks" service with a checkMotors callback
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr service = 
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr service =
         node->create_service<std_srvs::srv::Trigger>("checks", &checkMotors);
 
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Ready to check motors");

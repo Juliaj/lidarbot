@@ -11,9 +11,9 @@ import numpy as np
 
 # Import ROS2 libraries
 import rclpy
+from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Images
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data  # Uses Best Effort reliability for camera
-from cv_bridge import CvBridge  # Package to convert between ROS and OpenCV Images
 from sensor_msgs.msg import Image  # Image is the message type
 
 # The different ArUco dictionaries built into the OpenCV library
@@ -129,7 +129,6 @@ class ArucoNode(Node):
 
         # Check that at least one ArUco marker was detected
         if marker_ids is not None:
-
             # Get the rotation and translation vectors
             rvecs, tvecs, obj_points = cv2.aruco.estimatePoseSingleMarkers(
                 corners,
@@ -180,7 +179,6 @@ class ArucoNode(Node):
 
 
 def main(args=None):
-
     # Initialize the rclpy library
     rclpy.init(args=args)
 

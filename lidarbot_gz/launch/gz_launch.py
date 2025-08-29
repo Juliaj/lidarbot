@@ -6,20 +6,18 @@ import os
 
 from launch import LaunchDescription
 from launch.actions import (
+    AppendEnvironmentVariable,
     DeclareLaunchArgument,
     IncludeLaunchDescription,
-    AppendEnvironmentVariable,
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-
     # Set the path to different files and folders
     pkg_path = FindPackageShare(package="lidarbot_gz").find("lidarbot_gz")
     pkg_description = FindPackageShare(package="lidarbot_description").find(
@@ -153,8 +151,8 @@ def generate_launch_description():
         executable="ekf_node",
         parameters=[
             ekf_params_file,
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
-            ],
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
+        ],
         remappings=[("/odometry/filtered", "/odom")],
     )
 
@@ -162,12 +160,12 @@ def generate_launch_description():
     start_joystick_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [os.path.join(pkg_teleop, "launch", "joystick_launch.py")]
-    ),
+        ),
         launch_arguments={
             "use_sim_time": use_sim_time,
         }.items(),
     )
-    
+
     # Start twist mux
     start_twist_mux_cmd = Node(
         package="twist_mux",

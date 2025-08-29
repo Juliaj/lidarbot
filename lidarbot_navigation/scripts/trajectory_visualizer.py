@@ -6,17 +6,12 @@
 # WIP
 
 import rclpy
-from rclpy.node import Node
-
+from geometry_msgs.msg import Point, PoseStamped
 from nav_msgs.msg import Path
-from geometry_msgs.msg import (
-    Point,
-    PoseStamped,
-)
+from rclpy.node import Node
 
 
 class TrajectoryVisualizer(Node):
-
     def __init__(self, name):
         super().__init__(name)
 
@@ -43,19 +38,16 @@ class TrajectoryVisualizer(Node):
 
     # Callback function for odometry type messages
     def odom_callback(self, odom_msg):
-
         # Process message position and add it to path
         # self.publish_trajectory_path(odom_msg.pose.pose.position)
         self.publish_trajectory_path(odom_msg.poses[0].pose.position)
 
     # Add pose and publish trajectory path message
     def publish_trajectory_path(self, position):
-
         # If the pose has moved more than a set threshold, add it ot the path message and publish
         if (abs(self.previous_pose_position.x - position.x) > self.threshold_param) or (
             abs(self.previous_pose_position.y - position.y) > self.threshold_param
         ):
-
             # Add current pose to path
             self.trajectory_path_msg.header.stamp = self.get_clock().now().to_msg()
             self.trajectory_path_msg.header.frame_id = self.frame_id_param

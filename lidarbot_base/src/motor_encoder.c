@@ -1,4 +1,4 @@
-// This file calculate encoder ticks and sets the speed each motor should run at according to 
+// This file calculate encoder ticks and sets the speed each motor should run at according to
 // the commands received from the Waveshare Motor Driver system hardware component
 
 #include "lidarbot_base/motor_encoder.h"

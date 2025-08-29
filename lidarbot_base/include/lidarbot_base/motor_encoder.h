@@ -28,7 +28,7 @@ extern int right_wheel_pulse_count;
 extern int left_wheel_direction;
 extern int right_wheel_direction;
 
-#endif 
+#endif
 
 #ifdef __cplusplus
 }

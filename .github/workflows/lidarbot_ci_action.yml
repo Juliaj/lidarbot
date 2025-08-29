@@ -14,19 +14,19 @@ jobs:
       uses: ros-tooling/setup-ros@v0.7
       with:
         required-ros-distributions: humble
-            
+
     - name: Install WiringPi i2c library for RPi 4
       uses: actions/checkout@v4
     - run: |
         mkdir Downloads
-        git clone https://github.com/wbeebe/WiringPi.git
+        git clone https://github.com/WiringPi/WiringPi
         cd WiringPi/
         ./build
-    
+
     - name: Install dependencies for MPU6050 C++ library
       run: sudo apt install libi2c-dev i2c-tools libi2c0
-        
-    - name: Build Lidarbot packages 
+
+    - name: Build Lidarbot packages
       uses: ros-tooling/action-ros-ci@v0.4
       with:
         package-name: |

@@ -46,13 +46,15 @@ class MPU6050Hardware : public hardware_interface::SensorInterface
 	double linear_accel_x;
 	double linear_accel_y;
 	double linear_accel_z;
-	  	
+
 	Quaternion quat;
-	float euler_angles[3]; 
+	float euler_angles[3];
 	float gyro_values[3];
   	float accel_values[3];
 
     rclcpp::Logger logger_;
+    rclcpp::Time last_read_time_;
+    static constexpr double READ_INTERVAL_ = 0.1; // 100ms = 10 Hz
 };
 
 } // namespace lidarbot_bringup

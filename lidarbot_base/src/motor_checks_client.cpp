@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("motor_checks_client");
 
     // Create a client inside the node to call the "checks" server node
-    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client = 
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client =
         node->create_client<std_srvs::srv::Trigger>("checks");
 
     // Create the request, which is empty
