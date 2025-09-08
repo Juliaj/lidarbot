@@ -153,11 +153,11 @@ def generate_launch_description():
             "use_sim_time": use_sim_time,
         }.items(),
     )
-
-    # Start rplidar node
-    start_ld19_lidar_cmd = IncludeLaunchDescription(
+    
+    # Start LD19 lidar node
+    start_ld19idar_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [os.path.join(pkg_path, "launch", "ld19_lidar_launch.py")]
+            [os.path.join(pkg_path, "launch", "ld19_launch.py")]
         )
     )
 
@@ -192,8 +192,13 @@ def generate_launch_description():
     ld.add_action(start_delayed_imu_broadcaster_spawner)
     ld.add_action(start_robot_localization_cmd)
     ld.add_action(start_joystick_cmd)
+<<<<<<< HEAD
     ld.add_action(start_ld19_lidar_cmd)
     ld.add_action(start_camera_cmd)
+=======
+    ld.add_action(start_ld19idar_cmd)
+    #ld.add_action(start_camera_cmd)
+>>>>>>> 2a8c4e6 (Add local updates from rpi)
     ld.add_action(start_twist_mux_cmd)
 
     return ld

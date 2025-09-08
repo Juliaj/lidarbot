@@ -20,8 +20,6 @@ teleop_node: # PS4 Controller
     scale_angular_turbo:
       yaw: 1.0 # Scale factor for angular velocity
 
-
-
     enable_button: 6 # left shoulder button
     enable_turbo_button: 7 # right shoulder button
 
