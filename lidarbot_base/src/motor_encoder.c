@@ -27,11 +27,14 @@ void left_wheel_pulse() {
 
   // Read encoder direction value for left wheel
   left_wheel_direction = digitalRead(LEFT_WHL_ENC_DIR);
+  printf("Left wheel direction: %d, pin: %d\r\n", left_wheel_direction, LEFT_WHL_ENC_DIR);
 
   if (left_wheel_direction == 1)
     left_wheel_pulse_count++;
   else
     left_wheel_pulse_count--;
+
+  printf("Left wheel pulse count: %d\r\n", left_wheel_pulse_count);
 }
 
 // Right wheel callback function

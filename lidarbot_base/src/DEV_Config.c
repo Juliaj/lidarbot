@@ -116,9 +116,11 @@ UBYTE DEV_Digital_Read(UWORD Pin)
     UBYTE Read_value = 0;
 #ifdef USE_BCM2835_LIB
     Read_value = bcm2835_gpio_lev(Pin);
+    printf("USE_BCM2835_LIB, Read value: %d, pin: %d\r\n", Read_value, Pin);
 
 #elif USE_WIRINGPI_LIB
     Read_value = digitalRead(Pin);
+    printf("USE_WIRINGPI_LIB, Read value: %d, pin: %d\r\n", Read_value, Pin);
 
 #elif USE_DEV_LIB
     Read_value = SYSFS_GPIO_Read(Pin);
@@ -182,7 +184,8 @@ void DEV_SPI_Init()
     #elif USE_WIRINGPI_LIB
         printf("WIRINGPI SPI Device\r\n");
         //wiringPiSPISetup(0,9000000);
-        wiringPiSPISetupMode(0, 9000000, 0);
+        int spi_fd = wiringPiSPISetupMode(0, 9000000, 0);
+        printf("SPI FD: %d\r\n", spi_fd);
 
     #elif USE_DEV_LIB
         printf("DEV SPI Device\r\n");
@@ -238,6 +241,7 @@ void DEV_I2C_Init(uint8_t Add)
     #elif USE_WIRINGPI_LIB
         printf("WIRINGPI I2C Device\r\n");
         fd = wiringPiI2CSetup(Add);
+        printf("I2C FD: %d\r\n", fd);
 
     #elif USE_DEV_LIB
         // printf("DEV I2C Device\r\n");

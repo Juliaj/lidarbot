@@ -1,4 +1,5 @@
 # This launch file runs the ldlidar_stl_ros2 node with the configurations specified
+# ref: https://github.com/linorobot/linorobot2/blob/jazzy/linorobot2_bringup/launch/lasers.launch.py
 
 #!/usr/bin/env python3
 
@@ -11,7 +12,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     serial_port = LaunchConfiguration("serial_port", default="/dev/ttyUSB0")
     serial_baudrate = LaunchConfiguration("serial_baudrate", default="230400")
-    frame_id = LaunchConfiguration("frame_id", default="base_laser")
+    frame_id = LaunchConfiguration("frame_id", default="lidar_link")
     inverted = LaunchConfiguration("inverted", default="false")
     enable_angle_crop_func = LaunchConfiguration(
         "enable_angle_crop_func", default="false"
@@ -79,13 +80,6 @@ def generate_launch_description():
                     {"angle_crop_max": angle_crop_max},
                 ],
                 output="screen",
-            ),
-            # Base link to base laser tf node
-            Node(
-                package="tf2_ros",
-                executable="static_transform_publisher",
-                name="base_link_to_base_laser_ld19",
-                arguments=["0", "0", "0.18", "0", "0", "0", "base_link", "base_laser"],
             ),
         ]
     )

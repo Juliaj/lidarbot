@@ -27,6 +27,7 @@ bool move_motor(int motor_id)
 
     // Motor counts should be greater than 0 to confirm that the motor moved forward
     if (motor_id == MOTORA) {
+        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Left motor pulse count: %d", left_wheel_pulse_count);
         if (left_wheel_pulse_count> 0) {
             return true;
         } else return false;

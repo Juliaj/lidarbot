@@ -5,13 +5,14 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.conditions import UnlessCondition
 from launch.substitutions import LaunchConfiguration, PythonExpression
-from launch_ros.actions import LifecycleNode
+from launch_ros.actions import Node
 from nav2_common.launch import HasNodeParams
 
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time")
     slam_params_file = LaunchConfiguration("slam_params_file")
+
     default_params_file = os.path.join(
         get_package_share_directory("lidarbot_slam"),
         "config",
@@ -58,7 +59,7 @@ def generate_launch_description():
         condition=UnlessCondition(has_node_params),
     )
 
-    start_async_slam_toolbox_node = LifecycleNode(
+    start_async_slam_toolbox_node = Node(
         parameters=[actual_params_file, {"use_sim_time": use_sim_time}],
         package="slam_toolbox",
         executable="async_slam_toolbox_node",
