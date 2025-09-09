@@ -63,6 +63,7 @@ def generate_launch_description():
                 default_value=angle_crop_max,
                 description="Specifying the maximum angle to crop",
             ),
+            
             # LD19 LiDAR node
             Node(
                 package="ldlidar_stl_ros2",
@@ -76,18 +77,12 @@ def generate_launch_description():
                     {"port_baudrate": serial_baudrate},
                     {"laser_scan_dir": laser_scan_dir},
                     {"enable_angle_crop_func": enable_angle_crop_func},
+                    {"bins": 456},
                     {"angle_crop_min": angle_crop_min},
                     {"angle_crop_max": angle_crop_max},
-<<<<<<< HEAD
-=======
-                    {'scan_frequency': 2000},
->>>>>>> 2a8c4e6 (Add local updates from rpi)
                 ],
                 output="screen",
             ),
+
         ]
     )
-<<<<<<< HEAD
-=======
-
->>>>>>> 2a8c4e6 (Add local updates from rpi)

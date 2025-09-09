@@ -1,6 +1,6 @@
 controller_manager: # Node name
   ros__parameters:
-    update_rate: 15 # Has to be an integer otherwise errors are encountered
+    update_rate: 30 # Has to be an integer otherwise errors are encountered
 
     diff_controller:
       type: diff_drive_controller/DiffDriveController
@@ -40,7 +40,7 @@ imu_broadcaster:
 
     sensor_name: mpu6050
     frame_id: imu_link
-
+  
     # 500 data points used to calculate covariances
     static_covariance_orientation: [2.37075e-06, 0.0, 0.0, 7.77565e-39, 0.0, 0.0, 9.83427e-11, 0.0, 0.0]
     static_covariance_angular_velocity: [2.89216e-07, 0.0, 0.0, 3.19002e-07, 0.0, 0.0, 2.91161e-07, 0.0, 0.0]
