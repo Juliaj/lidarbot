@@ -62,26 +62,6 @@
           </noise>
         </z>
       </linear_acceleration>
-      <orientation>
-        <x>
-          <noise type="gaussian">
-            <mean>0.0</mean>
-            <stddev>2e-3</stddev>
-           </noise>
-        </x>
-        <y>
-          <noise type="gaussian">
-            <mean>0.0</mean>
-            <stddev>2e-3</stddev>
-          </noise>
-        </y>
-        <z>
-          <noise type="gaussian">
-            <mean>0.0</mean>
-            <stddev>2e-3</stddev>
-          </noise>
-        </z>
-      </orientation>
      </imu>
    </sensor>
   </gazebo>
