@@ -12,7 +12,7 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -128,11 +128,24 @@ def generate_launch_description():
         output="screen",
     )
 
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare("lidarbot_bringup"),
+            "config",
+            "controllers.yaml",
+        ]
+    )
     # Spawn diff_controller
     start_diff_controller_cmd = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["diff_controller", "--controller-manager", "/controller_manager"],
+        arguments=[
+            "diff_controller",
+            "--controller-manager",
+            "/controller_manager",
+            "--param-file",
+            robot_controllers,
+        ],
     )
 
     # Spawn joint_state_broadcaser
@@ -169,7 +182,7 @@ def generate_launch_description():
         package="twist_mux",
         executable="twist_mux",
         parameters=[twist_mux_params_file, {"use_sim_time": True}],
-        remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel_unstamped")],
+        remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel")],
     )
 
     # Create the launch description and populate
