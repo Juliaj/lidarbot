@@ -24,9 +24,7 @@ def generate_launch_description():
         "lidarbot_description"
     )
     pkg_teleop = FindPackageShare(package="lidarbot_teleop").find("lidarbot_teleop")
-    pkg_ros_ign_gazebo = FindPackageShare(package="ros_ign_gazebo").find(
-        "ros_ign_gazebo"
-    )
+
     pkg_navigation = FindPackageShare(package="lidarbot_navigation").find(
         "lidarbot_navigation"
     )
@@ -94,7 +92,7 @@ def generate_launch_description():
     # Launch Gazebo
     start_gazebo_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [os.path.join(pkg_ros_ign_gazebo, "launch", "ign_gazebo.launch.py")]
+            [FindPackageShare("ros_gz_sim"), "/launch/gz_sim.launch.py"]
         ),
         launch_arguments={
             "gz_args": ["-r -v4 ", world],
