@@ -517,7 +517,7 @@ Once you have these started, you launch following on Raspberry Pi
 ros2 launch lidarbot_bringup lidarbot_bringup_launch.py
 ```
 
-And you see:
+Issue 1:
 
 ```
 ros2_control_node-6] [WARN] [1756354982.227771759] [controller_manager]: Overrun detected! The controller manager missed its desired rate of 30 Hz. The loop took 34.143342 ms (missed cycles : 2).
@@ -557,3 +557,409 @@ Follow instructions from https://control.ros.org/rolling/doc/ros2_control/contro
 -   Reduce the read frequency from IMU. **Header file**: Added `last_read_time_` timestamp and `READ_INTERVAL_` constant (100ms = 10 Hz). **Source file**: Modified `read()` function to only call I2C functions every 100ms, using cached values otherwise
 -   Reduce EKF update rate. From the log, the EKF node is struggling to maintain its update rate, taking 50-111ms when it should be faster. This is likely because the IMU and odometry data are overwhelming the filter. `src/lidarbot_navigation/config/ekf.yaml` -> frequency 30 to 15, then to 8
 -   Reduce LD19 radar scan frequency. The frequency may be hard-coded, https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2/blob/bf668a89baf722a787dadc442860dcbf33a82f5a/ldlidar_driver/src/filter/tofbf.cpp#L39, `scan_frequency_ = 4500`; this is likely to be 4.5Hz
+
+### Issue 2, Time out of sync between RPi and dev machine
+
+The laser messages have timestamps from 5+ hours ago (1756433303 vs 1756488528), causing the transform cache to reject them.
+
+```bash
+date
+timedatectl status
+```
+
+If this shows difference, force time sync
+
+on RPi, run following
+
+```bash
+sudo apt update
+sudo apt install chrony
+sudo systemctl enable chrony
+sudo systemctl start chrony
+```
+
+### Issue3, Message Filter dropping message
+
+`slam_toolbox` and `rviz2` run on dev machine which is a Ubuntu laptop.
+
+From slam_toolbox
+
+```
+[async_slam_toolbox_node-1] [INFO] [1756489996.524368821] [slam_toolbox]: Message Filter dropping message: frame 'base_laser' at time 1756489996.415 for reason 'discarding message because the queue is full'
+[async_slam_toolbox_node-1] [INFO] [1756489996.631900128] [slam_toolbox]: Message Filter dropping message: frame 'base_laser' at time 1756489996.515 for reason 'discarding message because the queue is full'
+```
+
+Frrom rviz
+
+```
+[INFO] [1756490002.954505197] [rviz]: Message Filter dropping message: frame 'base_laser' at time 1756490001.915 for reason 'discarding message because the queue is full'
+[INFO] [1756490002.986657015] [rviz]: Message Filter dropping message: frame 'odom' at time 1756490002.134 for reason 'discarding message because the queue is full'
+```
+
+To check whether this is an issue with dev machine is not keeping up with the message processing. Run following to check on the laser scan publishing frequency,
+
+```bash
+ros2 topic hz /scan
+```
+
+Run following commands on dev machine to inspect CPU and memory
+
+```bash
+htop
+
+# memory and disk
+free -h  # Memory usage
+iostat 1  # Disk I/O
+```
+
+Run `htop` with slam_toolbx and rviz
+
+```bash
+htop -p $(pgrep -f slam_toolbox)
+htop -p $(pgrep -f rviz)
+```
+
+If there are plenty of resources available, we could check:
+
+1. **ROS2 message queue configuration** - default queue sizes too small
+2. **SLAM toolbox internal processing** - single-threaded bottlenecks
+3. **Network message buffering** - UDP/TCP buffer limits
+
+Following are the steps. For the problem, it turned out none of these was the culprit.
+
+```bash
+ros2 param get /slam_toolbox scan_buffer_size
+# Integer value is: 10000
+
+ros2 param get /async_slam_toolbox_node scan_buffer_size
+# Integer value is: 1
+```
+
+slam_toolbox's scan queue is only 1 message deep, which might have caused immediate overflow when it can't process laser data fast enough.
+
+```bash
+ros2 param set /slam_toolbox scan_queue_size 100
+# this made no visible difference, lot of message were reported dropped.
+
+# next check on throttling
+ros2 param list /slam_toolbox | grep -E "(rate|interval|timeout|throttle)"
+  # /bond_disable_heartbeat_timeout
+  # ceres_trust_strategy
+  # map_update_interval
+  # minimum_time_interval
+  # throttle_scans
+  # transform_timeout
+
+ros2 param get /slam_toolbox throttle_scans
+ros2 param get /slam_toolbox map_update_interval
+ros2 param get /slam_toolbox minimum_time_interval
+# Integer value is: 1
+# Double value is: 5.0
+# Double value is: 0.5
+
+ros2 param set /slam_toolbox throttle_scans 10
+# made no visible difference
+
+
+# Check on internal message filter
+ros2 param get /slam_toolbox tf_buffer_duration
+# Double value is: 30.0 (seconds)
+
+ros2 topic hz /tf
+# average rate: 59.615  (Hz) which is higher than laser rate from ros2 topic hz /scan
+# 	min: 0.002s max: 0.021s std dev: 0.00535s window: 62
+# average rate: 64.703
+# 	min: 0.000s max: 0.021s std dev: 0.00659s window: 132
+# average rate: 67.092
+# 	min: 0.000s max: 0.021s std dev: 0.00674s window: 204
+# average rate: 68.750
+# 	min: 0.000s max: 0.021s std dev: 0.00695s window: 278
+```
+
+Mext step, check actual map update rate vs. scan input rate
+
+```bash
+ros2 param get /slam_toolbox map_update_interval
+# Double value is: 5.0 (seconds)
+# changed this to 1s and no difference.
+```
+
+Debug TF transform Timing
+
+```bash
+ros2 topic hz /tf
+# average rate: 49.944
+# 	min: 0.019s max: 0.021s std dev: 0.00045s window: 51
+# average rate: 50.007
+# 	min: 0.019s max: 0.021s std dev: 0.00045s window: 102
+# average rate: 50.003
+# 	min: 0.019s max: 0.021s std dev: 0.00043s window: 152
+
+ros2 topic delay /scan
+# average delay: 0.008
+# 	min: 0.005s max: 0.011s std dev: 0.00215s window: 4
+# average delay: 0.008
+# 	min: 0.005s max: 0.011s std dev: 0.00178s window: 14
+# average delay: 0.007
+# 	min: 0.005s max: 0.011s std dev: 0.00164s window: 24
+
+```
+
+Is `transform_timeout: 0.2` too tight for sync? TF @ 50Hz (20ms intervals) vs scan @ 10Hz (100ms intervals). Message filter expects TF transform availability within timeout window. This turned out not to be the issue!
+
+```bash
+# update yaml
+# transform_timeout: 0.5      # Increase from 0.2
+# tf_buffer_duration: 60.     # Increase from 30
+#  debug_logging: true
+```
+
+Next, do we have a broken tf transform ?
+
+```bash
+# Check what frames actually exist
+ros2 run tf2_tools view_frames
+# map → odom → base_footprint → base_link → base_laser
+
+ # Verify the scan topic is using the right frame
+ros2 topic echo /scan --field header.frame_id
+# base_laser
+```
+
+Fix 1:
+
+There was an issue on **conflicting TF frames** which may have caused message filter to drop scans. - LD19 launch published `base_laser` frame while URDF defined `lidar_link`, creating duplicate/conflicting transforms.
+
+Fix 2:
+
+Based on [LD19 doc](https://wiki.youyeetoo.com/en/Lidar/D300), the scannning frequency is 5 to 13Hz. To reduce the amount of data sent from Lida, we'd need to implement PWM Speed Control for the lidar
+
+-   Connect PWM control to LiDAR
+-   Set duty cycle to achieve ~2-3 Hz rotation
+
+This will reduce messages from ~5-13 per second to ~2-3 per second
+
+The code we added on the driver side confirmed the scanning freq from Lidar is around 10Hz
+
+```
+[ldlidar_stl_ros2_node-5] [ldrobot] LiDAR scanning frequency: 9.95556 Hz (rotation speed: 3584 deg/s)
+[ldlidar_stl_ros2_node-5] [ldrobot] LiDAR scanning frequency: 9.95278 Hz (rotation speed: 3583 deg/s)
+[ldlidar_stl_ros2_node-5] [ldrobot] LiDAR scanning frequency: 9.96111 Hz (rotation speed: 3586 deg/s)
+[ldlidar_stl_ros2_node-5] [ldrobot] LiDAR scanning frequency: 9.96389 Hz (rotation speed: 3587 deg/s)
+[ldlidar_stl_ros2_node-5] [ldrobot] LiDAR scanning frequency: 9.90833 Hz (rotation speed: 3567 deg/s)
+```
+
+### Navigation
+
+https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/
+
+Fix 3
+
+SLAM map is not generated
+
+ros2 run tf2_ros tf2_monitor
+
+If you see two publishers with slam_toolbox, this is normal. One is to /tf, the other is to
+
+```
+
+Other debug info
+
+
+```
+
+$ ros2 topic info /tf --verbose
+Type: tf2_msgs/msg/TFMessage
+
+Publisher count: 5
+
+Node name: diff_controller
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: PUBLISHER
+GID: 01.0f.2a.8a.39.0c.0e.03.00.00.00.00.00.00.60.03
+QoS profile:
+Reliability: RELIABLE
+History (Depth): UNKNOWN
+Durability: TRANSIENT_LOCAL
+Lifespan: Infinite
+Deadline: Infinite
+Liveliness: AUTOMATIC
+Liveliness lease duration: Infinite
+
+Node name: robot_state_publisher
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: PUBLISHER
+GID: 01.0f.2a.8a.b4.0b.c6.e5.00.00.00.00.00.00.14.03
+QoS profile:
+Reliability: RELIABLE
+History (Depth): UNKNOWN
+Durability: VOLATILE
+Lifespan: Infinite
+Deadline: Infinite
+Liveliness: AUTOMATIC
+Liveliness lease duration: Infinite
+
+Node name: ekf_filter_node
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: PUBLISHER
+GID: 01.0f.2a.8a.b5.0b.7d.62.00.00.00.00.00.00.1b.03
+QoS profile:
+Reliability: RELIABLE
+History (Depth): UNKNOWN
+Durability: VOLATILE
+Lifespan: Infinite
+Deadline: Infinite
+Liveliness: AUTOMATIC
+Liveliness lease duration: Infinite
+
+Node name: slam_toolbox
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: PUBLISHER
+GID: 01.0f.c6.af.54.ab.f9.1c.00.00.00.00.00.00.25.03
+QoS profile:
+Reliability: RELIABLE
+History (Depth): UNKNOWN
+Durability: VOLATILE
+Lifespan: Infinite
+Deadline: Infinite
+Liveliness: AUTOMATIC
+Liveliness lease duration: Infinite
+
+Node name: slam_toolbox
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: PUBLISHER
+GID: 01.0f.c6.af.54.ab.f9.1c.00.00.00.00.00.00.29.03
+QoS profile:
+Reliability: RELIABLE
+History (Depth): UNKNOWN
+Durability: VOLATILE
+Lifespan: Infinite
+Deadline: Infinite
+Liveliness: AUTOMATIC
+Liveliness lease duration: Infinite
+
+Subscription count: 2
+
+Node name: transform_listener_impl_aaaafc9c33b0
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.2a.8a.b5.0b.7d.62.00.00.00.00.00.00.18.04
+QoS profile:
+Reliability: RELIABLE
+History (Depth): UNKNOWN
+Durability: VOLATILE
+Lifespan: Infinite
+Deadline: Infinite
+Liveliness: AUTOMATIC
+Liveliness lease duration: Infinite
+
+Node name: transform_listener_impl_5f044713dc00
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.c6.af.54.ab.f9.1c.00.00.00.00.00.00.23.04
+QoS profile:
+Reliability: RELIABLE
+History (Depth): UNKNOWN
+Durability: VOLATILE
+Lifespan: Infinite
+Deadline: Infinite
+Liveliness: AUTOMATIC
+Liveliness lease duration: Infinite
+
+```
+
+Error from rviz2
+
+```
+
+[ERROR] [1757305185.074963098] [rviz2]: Lookup would require extrapolation into the future. Requested time 1757305185.016146 but the latest data is at time 1757305184.979896, when looking up transform from frame [lidar_link] to frame [map]
+[ERROR] [1757305194.418170018] [rviz2]: Lookup would require extrapolation into the future. Requested time 1757305194.416141 but the latest data is at time 1757305194.380228, when looking up transform from frame [lidar_link] to frame [map]
+
+```
+
+
+These are transform timing/synchronization errors in RViz. The error means RViz is trying to look up transforms at a time when they don't exist yet.
+Root Causes
+1. Clock Synchronization Issues:
+
+System clocks not synchronized between nodes
+Sensor data timestamped in the future relative to TF data
+
+2. Transform Publishing Delays:
+
+SLAM Toolbox publishing map -> odom transform too slowly
+EKF publishing odom -> base_footprint with delays
+Static transforms not being published fast enough
+
+3. Sensor Timestamp Issues:
+
+Lidar data timestamped incorrectly
+Clock skew between lidar driver and TF system
+
+Diagnostic Steps
+Check transform timing:
+
+# Monitor transform delays
+ros2 run tf2_ros tf2_monitor
+
+# Check specific transform chain timing
+ros2 run tf2_ros tf2_monitor map lidar_link
+
+# Look for timing gaps
+ros2 topic echo /tf --field transforms[0].header.stamp
+
+# Compare lidar timestamp vs system time
+ros2 topic echo /scan --field header.stamp
+
+# Check current ROS time
+ros2 topic echo /clock
+
+# Verify static transforms exist
+ros2 topic echo /tf_static --once
+
+Common Fixes
+1. Increase TF Buffer Duration:
+In your SLAM Toolbox config:
+
+tf_buffer_duration: 30.0  # Increase from default
+transform_timeout: 0.5    # Increase timeout
+
+2. Fix EKF Timing:
+In your robot_localization config:
+
+frequency: 30  # Match your sensor frequency
+transform_timeout: 0.1
+
+3. RViz Configuration:
+In RViz, set larger TF timeout:
+
+TF Display → Transform Timeout: 1.0 (instead of 0.1)
+
+4. Check Static Transform Publishing:
+Ensure static transforms are published at startup:
+
+5. Lidar Driver Fix:
+If using simulation or custom driver, ensure proper timestamping:
+
+
+links found
+https://thinkrobotics.com/blogs/learn/ros2-slam-tutorial-master-simultaneous-localization-and-mapping-for-autonomous-robots
+
+
+## Fast DDS Discoery Server
+https://github.com/hippo5329/linorobot2_hardware/wiki#use-ros2-with-fast-dds-discovery-server---optional
+```
