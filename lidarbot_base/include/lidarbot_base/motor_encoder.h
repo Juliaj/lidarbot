@@ -12,10 +12,13 @@ extern "C" {
 
 #include "MotorDriver.h"
 
-#define LEFT_WHL_ENC_INT 25
-#define RIGHT_WHL_ENC_INT 24
+// back up, in rviz2, forward command shows the robot was rotating
+#define LEFT_WHL_ENC_INT 23
 #define LEFT_WHL_ENC_DIR 22
-#define RIGHT_WHL_ENC_DIR 23
+
+#define RIGHT_WHL_ENC_INT 24
+#define RIGHT_WHL_ENC_DIR 25
+
 
 void handler(int signo);
 void left_wheel_pulse();
@@ -28,7 +31,7 @@ extern int right_wheel_pulse_count;
 extern int left_wheel_direction;
 extern int right_wheel_direction;
 
-#endif 
+#endif
 
 #ifdef __cplusplus
 }

@@ -3,14 +3,13 @@
 import os
 
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration, Command
 from launch.actions import DeclareLaunchArgument
+from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-
     # Launch config variables
     use_sim_time = LaunchConfiguration("use_sim_time")
     use_ros2_control = LaunchConfiguration("use_ros2_control")

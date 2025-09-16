@@ -9,12 +9,12 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(std_srvs REQUIRED)
 
 # COMPILE
-add_library(lidarbot_hardware SHARED 
-          src/lidarbot_hardware.cpp 
-          src/wheel.cpp 
-          src/MotorDriver.c 
-          src/motor_encoder.c 
-          src/PCA9685.c 
+add_library(lidarbot_hardware SHARED
+          src/lidarbot_hardware.cpp
+          src/wheel.cpp
+          src/MotorDriver.c
+          src/motor_encoder.c
+          src/PCA9685.c
           src/DEV_Config.c
 )
 
@@ -50,28 +50,28 @@ install(
 include_directories(include)
 
 # Add motor_checks_client and motor_checks_server nodes as executables with dependencies
-add_executable(motor_checks_server 
-              src/motor_checks_server.cpp 
-              src/motor_encoder.c   
-              src/DEV_Config.c 
-              src/PCA9685.c 
-              src/MotorDriver.c) 
+add_executable(motor_checks_server
+              src/motor_checks_server.cpp
+              src/motor_encoder.c
+              src/DEV_Config.c
+              src/PCA9685.c
+              src/MotorDriver.c)
 
 ament_target_dependencies(motor_checks_server rclcpp std_srvs)
 target_link_libraries(motor_checks_server m wiringPi pthread crypt rt)
 target_compile_options(motor_checks_server PRIVATE -w)
 
-add_executable(motor_checks_client src/motor_checks_client.cpp) 
+add_executable(motor_checks_client src/motor_checks_client.cpp)
 ament_target_dependencies(motor_checks_client rclcpp std_srvs)
 
 # Install executables to enable discovery for 'ros2 run'
-install(TARGETS 
-    motor_checks_client 
+install(TARGETS
+    motor_checks_client
     motor_checks_server
     DESTINATION lib/${PROJECT_NAME}
 )
 
-# EXPORTS 
+# EXPORTS
 ament_export_libraries(lidarbot_hardware)
 
 ament_package()

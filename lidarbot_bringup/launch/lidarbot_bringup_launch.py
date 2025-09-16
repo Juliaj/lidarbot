@@ -10,20 +10,19 @@ from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
-    TimerAction,
     RegisterEventHandler,
+    TimerAction,
 )
 from launch.conditions import IfCondition
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, Command
 from launch.event_handlers import OnProcessStart
-
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import FindExecutable
 
 
 def generate_launch_description():
-
     # Set the path to different files and folders
     pkg_path = FindPackageShare(package="lidarbot_bringup").find("lidarbot_bringup")
     pkg_description = FindPackageShare(package="lidarbot_description").find(
@@ -63,19 +62,29 @@ def generate_launch_description():
     )
 
     # Start robot state publisher
-    start_robot_state_publisher_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [os.path.join(pkg_description, "launch", "robot_state_publisher_launch.py")]
-        ),
-        launch_arguments={
-            "use_sim_time": use_sim_time,
-            "use_ros2_control": use_ros2_control,
-        }.items(),
-    )
+    # start_robot_state_publisher_cmd = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [os.path.join(pkg_description, "launch", "robot_state_publisher_launch.py")]
+    #     ),
+    #     launch_arguments={
+    #         "use_sim_time": use_sim_time,
+    #         "use_ros2_control": use_ros2_control,
+    #     }.items(),
+    # )
 
-    robot_description = Command(
-        ["ros2 param get --hide-type /robot_state_publisher robot_description"]
+    # robot_description = Command(
+    #     ["ros2 param get --hide-type /robot_state_publisher robot_description"]
+    # )
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution(
+                [FindPackageShare("lidarbot_description"), "urdf", "lidarbot.urdf.xacro"]
+            ),
+        ]
     )
+    robot_description = {"robot_description": robot_description_content}
 
     # Launch controller manager
     start_controller_manager_cmd = Node(
@@ -89,6 +98,14 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=["diff_controller", "--controller-manager", "/controller_manager"],
+    )
+
+    # robot state publisher
+    robot_state_pub_node = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        output="screen",
+        parameters=[robot_description],
     )
 
     # Spawn joint_state_broadcaser
@@ -141,25 +158,26 @@ def generate_launch_description():
         executable="ekf_node",
         parameters=[
             ekf_params_file,
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
-            ],
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
+        ],
         remappings=[("/odometry/filtered", "/odom")],
+        # arguments=["--ros-args", "--log-level", "DEBUG"],
     )
 
     # Start joystick node
     start_joystick_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [os.path.join(pkg_teleop, "launch", "joystick_launch.py")]
-    ),
+        ),
         launch_arguments={
             "use_sim_time": use_sim_time,
         }.items(),
     )
     
-    # Start rplidar node
-    start_rplidar_cmd = IncludeLaunchDescription(
+    # Start LD19 lidar node
+    start_ld19idar_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [os.path.join(pkg_path, "launch", "rplidar_launch.py")]
+            [os.path.join(pkg_path, "launch", "ld19_launch.py")]
         )
     )
 
@@ -175,7 +193,7 @@ def generate_launch_description():
         package="twist_mux",
         executable="twist_mux",
         parameters=[twist_mux_params_file],
-        remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel_unstamped")],
+        remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel")],
     )
 
     # Create the launch description and populate
@@ -187,15 +205,15 @@ def generate_launch_description():
     ld.add_action(declare_use_robot_localization_cmd)
 
     # Add any actions
-    ld.add_action(start_robot_state_publisher_cmd)
+    ld.add_action(robot_state_pub_node)
     ld.add_action(start_delayed_controller_manager)
     ld.add_action(start_delayed_diff_drive_spawner)
     ld.add_action(start_delayed_joint_broadcaster_spawner)
     ld.add_action(start_delayed_imu_broadcaster_spawner)
     ld.add_action(start_robot_localization_cmd)
     ld.add_action(start_joystick_cmd)
-    ld.add_action(start_rplidar_cmd)
-    ld.add_action(start_camera_cmd)
+    ld.add_action(start_ld19idar_cmd)
+    # ld.add_action(start_camera_cmd)
     ld.add_action(start_twist_mux_cmd)
 
     return ld

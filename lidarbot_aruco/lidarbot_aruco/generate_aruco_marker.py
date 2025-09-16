@@ -5,10 +5,11 @@
 # Adapted from https://automaticaddison.com/how-to-create-an-aruco-marker-using-opencv-python/
 # and https://pyimagesearch.com/2020/12/14/generating-aruco-markers-with-opencv-and-python/
 
-import cv2
 import argparse
-import numpy as np
 import sys
+
+import cv2
+import numpy as np
 
 # Construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -55,7 +56,6 @@ ARUCO_DICT = {
 
 # Main method
 def main():
-
     # Check that we have a valid ArUco marker
     if ARUCO_DICT.get(args["type"], None) is None:
         print("[INFO] ArUco tag of '{}' is not supported".format(args["type"]))

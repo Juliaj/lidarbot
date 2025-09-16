@@ -13,7 +13,7 @@
   <joint name="imu_joint" type="fixed">
     <parent link="base_link"/>
     <child link="imu_link"/>
-    <origin xyz="0.045 0 0.0175" rpy="0 0 0"/> 
+    <origin xyz="0.045 0 0.0175" rpy="0 0 0"/>
     </joint>
 
   <gazebo reference="imu_link">
@@ -62,26 +62,6 @@
           </noise>
         </z>
       </linear_acceleration>
-      <orientation>
-        <x>
-          <noise type="gaussian">
-            <mean>0.0</mean>
-            <stddev>2e-3</stddev>
-           </noise>
-        </x>
-        <y>
-          <noise type="gaussian">
-            <mean>0.0</mean>
-            <stddev>2e-3</stddev>
-          </noise>
-        </y>
-        <z>
-          <noise type="gaussian">
-            <mean>0.0</mean>
-            <stddev>2e-3</stddev>
-          </noise>
-        </z>
-      </orientation>
      </imu>
    </sensor>
   </gazebo>
@@ -93,13 +73,13 @@
       <geometry>
         <mesh filename="file://$(find lidarbot_description)/meshes/rpi_camera.dae"/>
       </geometry>
-    </visual> 
+    </visual>
   </link>
 
   <joint name="camera_joint" type="fixed">
     <parent link="base_link"/>
     <child link="camera_link"/>
-    <origin xyz="0.205 0 0.0425" rpy="0 0 0"/> 
+    <origin xyz="0.205 0 0.0425" rpy="0 0 0"/>
   </joint>
 
   <link name="camera_link_optical"></link>
@@ -140,7 +120,7 @@
       <geometry>
         <mesh filename="file://$(find lidarbot_description)/meshes/rplidar_top.dae"/>
       </geometry>
-    </visual> 
+    </visual>
     <collision>
       <origin xyz="0 -0.0028 0" rpy="0 0 0"/>
       <geometry>
@@ -156,7 +136,7 @@
   <joint name="lidar_joint" type="fixed">
     <parent link="base_link"/>
     <child link="lidar_link"/>
-    <origin xyz="0.1385 0.0095 0.08" rpy="0 0 ${-pi/2}"/>
+    <origin xyz="0.1385 0.0095 0.08" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 

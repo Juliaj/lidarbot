@@ -10,13 +10,11 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-
     # Set the path to different files and folders
     pkg_path = FindPackageShare(package="lidarbot_gazebo").find("lidarbot_gazebo")
     pkg_description = FindPackageShare(package="lidarbot_description").find(

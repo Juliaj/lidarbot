@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
-  
+
   <!-- Real robot ros2_control -->
   <xacro:unless value="$(arg sim_mode)">
     <ros2_control name='RealRobot' type='system'>
@@ -29,7 +29,7 @@
       </joint>
     </ros2_control>
 
-    <!-- MPU6050 sensor--> 
+    <!-- MPU6050 sensor-->
     <ros2_control name='MPU6050' type='sensor'>
       <hardware>
         <plugin>lidarbot_bringup/MPU6050Hardware</plugin>
@@ -46,7 +46,7 @@
         <state_interface name='angular_velocity.z'/>
         <state_interface name='linear_acceleration.x'/>
         <state_interface name='linear_acceleration.y'/>
-        <state_interface name='linear_acceleration.z'/>  
+        <state_interface name='linear_acceleration.z'/>
       </sensor>
     </ros2_control>
   </xacro:unless>

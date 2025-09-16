@@ -7,7 +7,7 @@
             <geometry>
                 <mesh filename="package://lidarbot_description/meshes/rplidar_top.dae"/>
             </geometry>
-        </visual> 
+        </visual>
         <collision>
             <origin xyz="0 -0.0028 0" rpy="0 0 0"/>
             <geometry>
@@ -22,16 +22,18 @@
     <joint name="lidar_joint" type="fixed">
         <parent link="base_link"/>
         <child link="lidar_link"/>
-        <origin xyz="0.1385 0.0095 0.08" rpy="0 0 ${-pi/2}"/>
+        <origin xyz="0.1385 0.0095 0.08" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
     </joint>
 
     <gazebo reference="lidar_link">
-        <sensor name="lidar" type="ray">
+        <sensor name="lidar" type="gpu_lidar">
             <pose>0 0 0 0 0 0</pose>
             <always_on>true</always_on>
-            <visualize>false</visualize>
+            <visualize>true</visualize>
             <update_rate>10</update_rate>
+            <topic>scan</topic>
+            <gz_frame_id>lidar_link</gz_frame_id>
             <ray>
                 <scan>
                     <horizontal>
@@ -52,13 +54,6 @@
                     <stddev>0.01</stddev>
                 </noise>
             </ray>
-            <plugin name="lidar_controller" filename="libgazebo_ros_ray_sensor.so">
-                <ros>
-                    <remapping>~/out:=scan</remapping>
-                </ros>
-                <output_type>sensor_msgs/LaserScan</output_type>
-                <frame_name>lidar_link</frame_name>
-            </plugin>
         </sensor>
     </gazebo>
 

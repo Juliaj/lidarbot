@@ -6,8 +6,9 @@
 # and https://pyimagesearch.com/2020/12/21/detecting-aruco-markers-with-opencv-and-python/
 
 import argparse
-import cv2
 import sys
+
+import cv2
 
 # Construct argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -41,7 +42,6 @@ ARUCO_DICT = {
 
 # Main method
 def main():
-
     # Check that we have a valid ArUco marker
     if ARUCO_DICT.get(args["type"], None) is None:
         print("[INFO] ArUco tag of '{}' is not supported".format(args["type"]))
@@ -56,7 +56,6 @@ def main():
     cap = cv2.VideoCapture(0)
 
     while True:
-
         # Capture frame-by-frame
         # This method returns True/False as well as the video frame
         ret, frame = cap.read()

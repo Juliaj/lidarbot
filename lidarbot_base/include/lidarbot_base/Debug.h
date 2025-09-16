@@ -18,8 +18,7 @@
 #if USE_DEBUG
 	#define DEBUG(__info,...) printf("Debug : " __info,##__VA_ARGS__)
 #else
-	#define DEBUG(__info,...)  
+	#define DEBUG(__info,...)
 #endif
 
 #endif
-

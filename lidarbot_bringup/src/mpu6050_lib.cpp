@@ -117,10 +117,10 @@ Quaternion MPU6050::getQuat(float *roll, float *pitch, float *yaw) {
 	float cy = cos(*yaw * 0.5);
 	float sy = sin(*yaw * 0.5);
 
-	quat.x = sr * cp * cy - cr * sp * sy; 
-	quat.y = cr * sp * cy + sr * cp * sy; 
+	quat.x = sr * cp * cy - cr * sp * sy;
+	quat.y = cr * sp * cy + sr * cp * sy;
 	quat.z = cr * cp * sy - sr * sp * cy;
-	quat.w = cr * cp * cy + sr * sp * sy; 
+	quat.w = cr * cp * cy + sr * sp * sy;
 
 	return quat;
 }
@@ -130,7 +130,7 @@ int MPU6050::getAngle(int axis, float *result) {
 		*result = _angle[axis]; //Get the result
 
 		*result *= (M_PI / 180); // Convert from deg to rad
-		return 0;	
+		return 0;
 	}
 	else {
 		std::cout << "ERR (MPU6050.cpp:getAngle()): 'axis' must be between 0 and 2 (for roll, pitch or yaw)\n"; //Print error message
@@ -202,4 +202,3 @@ void MPU6050::_update() { //Main update function - runs continuously
 		clock_gettime(CLOCK_REALTIME, &start); //Save time to start clock
 	}
 }
-

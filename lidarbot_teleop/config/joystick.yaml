@@ -4,19 +4,25 @@ joy_node:
     deadzone: 0.25
     autorepeat_rate: 20.0 # milliseconds
 
-teleop_node:
+teleop_node: # PS4 Controller
   ros__parameters:
     axis_linear:
-      x: 1
+      x: 1 # Left stick vertical axis
     scale_linear:
-      x: 0.4
-      
-    axis_angular:
-      yaw: 2 
-    scale_angular:
-      yaw: 1.0
-    
-    enable_button: 4
-    enable_turbo_button: -1 
+      x: 0.4 # Scale factor for linear velocity
+    scale_linear_turbo:
+      x: 1.0 # Scale factor for linear velocity
 
-    require_enable_button: true
+    axis_angular:
+      yaw: 0  # Left stick horizontal axis
+    scale_angular:
+      yaw: 0.5 # Scale factor for angular velocity
+    scale_angular_turbo:
+      yaw: 1.0 # Scale factor for angular velocity
+
+    enable_button: 6 # left shoulder button
+    enable_turbo_button: 7 # right shoulder button
+
+    require_enable_button: true # Enable deadman switch, which helps with quickly stopping the robot
+
+    publish_stamped_twist: true

@@ -26,13 +26,13 @@
 
 //Offsets - supply your own here (calculate offsets with getOffsets function)
 //    Gyroscope
-#define G_OFF_X -187 
-#define G_OFF_Y 757
-#define G_OFF_Z -157 
+#define G_OFF_X -507
+#define G_OFF_Y -139
+#define G_OFF_Z -81
 //     Accelerometer
-#define A_OFF_X -13450 
-#define A_OFF_Y 2803 
-#define A_OFF_Z -14419 
+#define A_OFF_X 32768
+#define A_OFF_Y -939
+#define A_OFF_Z -11907
 
 //-----------------------END MODIFY THESE PARAMETERS-----------------------
 
@@ -122,4 +122,3 @@ class MPU6050 {
 		int getAngle(int axis, float *result);
 		bool calc_yaw;
 };
-

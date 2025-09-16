@@ -16,14 +16,14 @@
   <!-- Distance between centre of wheel and robot base -->
   <xacro:property name="wheel_zoff" value="0.0125"/>
 
-  <link name="base_footprint"/> 	
+  <link name="base_footprint"/>
 
    <joint name="base_joint" type="fixed">
      <parent link="base_footprint"/>
      <child link="base_link"/>
      <origin xyz="-0.076 0 ${(wheel_radius + wheel_zoff / 2)}" rpy="0 0 0"/>
    </joint>
-	
+
   <!-- Robot base chasis-->
   <link name="base_link">
       <visual>
@@ -108,10 +108,10 @@
           <box size="0.096 0.062 0.02"/>
         </geometry>
       </collision>
-      
+
       <!-- Rplidar stand -->
       <visual name="rplidar_stand_visual">
-        <origin xyz="0.138 0.015 0.017" rpy="0 0 ${-2*pi}"/> 
+        <origin xyz="0.138 0.015 0.017" rpy="0 0 ${-2*pi}"/>
         <geometry>
           <mesh filename="package://lidarbot_description/meshes/rplidar_stand.dae"/>
         </geometry>

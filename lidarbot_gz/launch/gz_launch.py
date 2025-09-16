@@ -6,29 +6,25 @@ import os
 
 from launch import LaunchDescription
 from launch.actions import (
+    AppendEnvironmentVariable,
     DeclareLaunchArgument,
     IncludeLaunchDescription,
-    AppendEnvironmentVariable,
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
-
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-
     # Set the path to different files and folders
     pkg_path = FindPackageShare(package="lidarbot_gz").find("lidarbot_gz")
     pkg_description = FindPackageShare(package="lidarbot_description").find(
         "lidarbot_description"
     )
     pkg_teleop = FindPackageShare(package="lidarbot_teleop").find("lidarbot_teleop")
-    pkg_ros_ign_gazebo = FindPackageShare(package="ros_ign_gazebo").find(
-        "ros_ign_gazebo"
-    )
+
     pkg_navigation = FindPackageShare(package="lidarbot_navigation").find(
         "lidarbot_navigation"
     )
@@ -96,7 +92,7 @@ def generate_launch_description():
     # Launch Gazebo
     start_gazebo_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [os.path.join(pkg_ros_ign_gazebo, "launch", "ign_gazebo.launch.py")]
+            [FindPackageShare("ros_gz_sim"), "/launch/gz_sim.launch.py"]
         ),
         launch_arguments={
             "gz_args": ["-r -v4 ", world],
@@ -132,11 +128,24 @@ def generate_launch_description():
         output="screen",
     )
 
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare("lidarbot_bringup"),
+            "config",
+            "controllers.yaml",
+        ]
+    )
     # Spawn diff_controller
     start_diff_controller_cmd = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["diff_controller", "--controller-manager", "/controller_manager"],
+        arguments=[
+            "diff_controller",
+            "--controller-manager",
+            "/controller_manager",
+            "--param-file",
+            robot_controllers,
+        ],
     )
 
     # Spawn joint_state_broadcaser
@@ -153,8 +162,8 @@ def generate_launch_description():
         executable="ekf_node",
         parameters=[
             ekf_params_file,
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
-            ],
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
+        ],
         remappings=[("/odometry/filtered", "/odom")],
     )
 
@@ -162,18 +171,18 @@ def generate_launch_description():
     start_joystick_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [os.path.join(pkg_teleop, "launch", "joystick_launch.py")]
-    ),
+        ),
         launch_arguments={
             "use_sim_time": use_sim_time,
         }.items(),
     )
-    
+
     # Start twist mux
     start_twist_mux_cmd = Node(
         package="twist_mux",
         executable="twist_mux",
         parameters=[twist_mux_params_file, {"use_sim_time": True}],
-        remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel_unstamped")],
+        remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel")],
     )
 
     # Create the launch description and populate

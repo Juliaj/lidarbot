@@ -5,7 +5,7 @@
 #include <cmath>
 
 class Wheel
-{   
+{
   public:
     std::string name = "";
     int encoder_ticks = 0;

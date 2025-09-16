@@ -3,9 +3,9 @@
 * | Author      :   Waveshare team
 * | Function    :   Drive PCA9685
 * | Info        :
-*                The PCA9685 is an I2C-bus controlled 16-channel LED 
-*                controller optimized for LCD Red/Green/Blue/Amber 
-*                (RGBA) color backlighting applications. 
+*                The PCA9685 is an I2C-bus controlled 16-channel LED
+*                controller optimized for LCD Red/Green/Blue/Amber
+*                (RGBA) color backlighting applications.
 *----------------
 * |	This version:   V1.0
 * | Date        :   2018-09-04
@@ -19,7 +19,7 @@
 
 /**
  * Write bytes in PCA9685
- * 
+ *
  * @param reg: register.
  * @param value: value.
  *
@@ -67,7 +67,7 @@ static void PCA9685_SetPWM(UBYTE channel, UWORD on, UWORD off)
  * PCA9685 Initialize.
  * For the PCA9685, the device address can be controlled by setting A0-A5.
  * On our driver board, control is set by setting A0-A4, and A5 is grounded.
- * 
+ *
  * @param addr: PCA9685 address.  //0x40 ~ 0x5f
  *
  * Example:
@@ -81,13 +81,13 @@ void PCA9685_Init(char addr)
 
 /**
  * Set the frequency (PWM_PRESCALE) and restart.
- * 
- * For the PCA9685, Each channel output has its own 12-bit 
- * resolution (4096 steps) fixed frequency individual PWM 
- * controller that operates at a programmable frequency 
- * from a typical of 40 Hz to 1000 Hz with a duty cycle 
- * that is adjustable from 0 % to 100 % 
- * 
+ *
+ * For the PCA9685, Each channel output has its own 12-bit
+ * resolution (4096 steps) fixed frequency individual PWM
+ * controller that operates at a programmable frequency
+ * from a typical of 40 Hz to 1000 Hz with a duty cycle
+ * that is adjustable from 0 % to 100 %
+ *
  * @param freq: Output frequency.  //40 ~ 1000
  *
  * Example:
@@ -117,7 +117,7 @@ void PCA9685_SetPWMFreq(UWORD freq)
 
 /**
  * Set channel output the PWM duty cycle.
- * 
+ *
  * @param channel: 16 output channels.  //(0 ~ 15)
  * @param pulse: duty cycle.  //(0 ~ 100  == 0% ~ 100%)
  *
@@ -131,7 +131,7 @@ void PCA9685_SetPwmDutyCycle(UBYTE channel, UWORD pulse)
 
 /**
  * Set channel output level.
- * 
+ *
  * @param channel: 16 output channels.  //(0 ~ 15)
  * @param value: output level, 0 low level, 1 high level.  //0 or 1
  *

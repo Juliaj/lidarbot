@@ -16,7 +16,7 @@
 #include "lidarbot_base/MotorDriver.h"
 #include "lidarbot_base/Debug.h"
 
-UWORD ain1_value, ain2_value; 
+UWORD ain1_value, ain2_value;
 UWORD bin1_value, bin2_value;
 
 /**
@@ -102,8 +102,8 @@ void Motor_Stop(UBYTE motor)
 }
 
 /**
-* Returns motor direction. 
-*   1 - forward 
+* Returns motor direction.
+*   1 - forward
 *   0 - backward
 *
 * @param motor: Motor A and Motor B
