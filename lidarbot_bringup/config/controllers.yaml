@@ -42,6 +42,6 @@ imu_broadcaster:
     frame_id: imu_link
   
     # 500 data points used to calculate covariances
-    static_covariance_orientation: [2.37075e-06, 0.0, 0.0, 7.77565e-39, 0.0, 0.0, 9.83427e-11, 0.0, 0.0]
-    static_covariance_angular_velocity: [2.89216e-07, 0.0, 0.0, 3.19002e-07, 0.0, 0.0, 2.91161e-07, 0.0, 0.0]
-    static_covariance_linear_acceleration: [0.0, 0.0, 0.0, 0.000168326, 0.0, 0.0, 0.00111257, 0.0, 0.0]
+    static_covariance_orientation: [3.60643e-06, 0.0, 0.0, 7.77565e-39, 0.0, 0.0, 1.40905e-08, 0.0, 0.0]
+    static_covariance_angular_velocity: [3.1234e-05, 0.0, 0.0, 0.000181439, 0.0, 0.0, 1.02643e-06, 0.0, 0.0]
+    static_covariance_linear_acceleration: [0.0, 0.0, 0.0, 0.000374093, 0.0, 0.0, 0.00666798, 0.0, 0.0]
